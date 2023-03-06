@@ -22,65 +22,45 @@ namespace Sat.Recruitment.Api.Services
             return await _userRepository.GetAllUsers();
         }
        
-        public async Task<User> AddUser(string name, string email, string address, string phone, string userType, string money)
+        public async Task<User> AddUser(User user)
         {
-            var newUser = new User
-            {
-                Name = name,
-                Email = email,
-                Address = address,
-                Phone = phone,
-                UserType = userType,
-                Money = decimal.Parse(money)
-            };
-
             var allUsers = await GetAllUsers();
 
-            newUser.NormalizeEmail();
+            user.NormalizeEmail();
 
-            var errors = newUser.Validate(allUsers);
+            var errors = user.Validate(allUsers);
 
             if (errors != null && errors != "")
                 throw new Exception(errors);
 
-            if (newUser.UserType == "Normal")
+            CalculateMoney(user);
+
+            return await _userRepository.AddUser(user);
+        }
+
+        public void CalculateMoney(User user) 
+        {
+            decimal percentage = 0;
+
+            switch (user.UserType)
             {
-                if (decimal.Parse(money) > 100)
-                {
-                    var percentage = Convert.ToDecimal(0.12);
-                    //If new user is normal and has more than USD100
-                    var gif = decimal.Parse(money) * percentage;
-                    newUser.Money = newUser.Money + gif;
-                }
-                if (decimal.Parse(money) < 100)
-                {
-                    if (decimal.Parse(money) > 10)
-                    {
-                        var percentage = Convert.ToDecimal(0.8);
-                        var gif = decimal.Parse(money) * percentage;
-                        newUser.Money = newUser.Money + gif;
-                    }
-                }
-            }
-            if (newUser.UserType == "SuperUser")
-            {
-                if (decimal.Parse(money) > 100)
-                {
-                    var percentage = Convert.ToDecimal(0.20);
-                    var gif = decimal.Parse(money) * percentage;
-                    newUser.Money = newUser.Money + gif;
-                }
-            }
-            if (newUser.UserType == "Premium")
-            {
-                if (decimal.Parse(money) > 100)
-                {
-                    var gif = decimal.Parse(money) * 2;
-                    newUser.Money = newUser.Money + gif;
-                }
+                case "Normal":
+                    if (user.Money > 100)
+                        percentage = Convert.ToDecimal(0.12);
+                    else if (user.Money < 100 && user.Money > 10)
+                        percentage = Convert.ToDecimal(0.8);
+                    break;
+                case "SuperUser":
+                    if (user.Money > 100)
+                        percentage = Convert.ToDecimal(0.20);
+                    break;
+                case "Premium":
+                    if (user.Money > 100)
+                        percentage = Convert.ToDecimal(2);
+                    break;
             }
 
-            return await _userRepository.AddUser(newUser);
+            user.Money = user.Money + (user.Money * percentage);
         }
 
 
