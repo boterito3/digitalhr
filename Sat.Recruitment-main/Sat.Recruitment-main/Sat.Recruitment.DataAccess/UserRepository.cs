@@ -1,10 +1,10 @@
-﻿using Sat.Recruitment.Api.Interfaces;
-using Sat.Recruitment.Api.Models;
+﻿using Sat.Recruitment.Domain.Interfaces;
+using Sat.Recruitment.Domain.Models;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Sat.Recruitment.Api.DataAccess
+namespace Sat.Recruitment.DataAccess
 {
     public class UserRepository: IUserRepository
     {
@@ -49,7 +49,7 @@ namespace Sat.Recruitment.Api.DataAccess
         public async Task<User> AddUser(User user)
         {
             var writer = GetFileWriter();
-            var newLine = $"\n{user.ConverToTextLine()}";
+            var newLine = $"\n{user.ConvertToTextLine()}";
             await writer.WriteLineAsync(newLine);
             writer.Close();
             return user;

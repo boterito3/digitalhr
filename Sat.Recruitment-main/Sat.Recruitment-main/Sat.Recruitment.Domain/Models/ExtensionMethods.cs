@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Sat.Recruitment.Api.Models
+namespace Sat.Recruitment.Domain.Models
 {
     public static class ExtensionMethods
     {
@@ -34,9 +34,34 @@ namespace Sat.Recruitment.Api.Models
             user.Email = string.Join("@", new string[] { aux[0], aux[1] });
         }
 
-        public static string ConverToTextLine(this User user)
+        public static string ConvertToTextLine(this User user)
         {
             return $"{user.Name},{user.Email},{user.Phone},{user.Address},{user.UserType},{user.Money}";
+        }
+
+        public static void CalculateMoney(this User user)
+        {
+            decimal percentage = 0;
+
+            switch (user.UserType)
+            {
+                case "Normal":
+                    if (user.Money > 100)
+                        percentage = Convert.ToDecimal(0.12);
+                    else if (user.Money < 100 && user.Money > 10)
+                        percentage = Convert.ToDecimal(0.8);
+                    break;
+                case "SuperUser":
+                    if (user.Money > 100)
+                        percentage = Convert.ToDecimal(0.20);
+                    break;
+                case "Premium":
+                    if (user.Money > 100)
+                        percentage = Convert.ToDecimal(1);
+                    break;
+            }
+
+            user.Money = user.Money + (user.Money * percentage);
         }
     }
 }

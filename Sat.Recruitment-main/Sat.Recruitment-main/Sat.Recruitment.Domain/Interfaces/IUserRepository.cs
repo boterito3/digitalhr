@@ -1,13 +1,12 @@
-﻿using Sat.Recruitment.Api.Models;
+﻿using Sat.Recruitment.Domain.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Sat.Recruitment.Api.Interfaces
+namespace Sat.Recruitment.Domain.Interfaces
 {
-    public interface IUserService
+    public interface IUserRepository
     {
         Task<List<User>> GetAllUsers();
         Task<User> AddUser(User user);
-
     }
 }

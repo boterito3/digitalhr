@@ -1,4 +1,4 @@
-﻿namespace Sat.Recruitment.Api.Models
+﻿namespace Sat.Recruitment.Domain.Models
 {
     public class User
     {

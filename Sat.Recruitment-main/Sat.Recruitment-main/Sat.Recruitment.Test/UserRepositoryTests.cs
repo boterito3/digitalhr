@@ -2,10 +2,9 @@
 using System.Dynamic;
 using System.IO;
 using Microsoft.AspNetCore.Mvc;
-using Sat.Recruitment.Api.Controllers;
-using Sat.Recruitment.Api.DataAccess;
-using Sat.Recruitment.Api.Models;
+using Sat.Recruitment.Domain.Models;
 using Xunit;
+using Sat.Recruitment.DataAccess;
 
 namespace Sat.Recruitment.Test
 {
@@ -21,6 +20,8 @@ namespace Sat.Recruitment.Test
             var result = userRepository.GetFileReader();
 
             Assert.IsType<StreamReader>(result);
+
+            result.Close();
         }
 
         [Fact]
@@ -31,6 +32,8 @@ namespace Sat.Recruitment.Test
             var result = userRepository.GetFileWriter();
 
             Assert.IsType<StreamWriter>(result);
+
+            result.Close();
         }
 
         [Fact]
